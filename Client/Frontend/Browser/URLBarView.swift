@@ -41,11 +41,13 @@ struct URLBarViewUX {
         theme.tintColor = UIConstants.PrivateModePurple
         theme.textColor = UIColor.white
         theme.buttonTintColor = UIConstants.PrivateModeActionButtonTintColor
+        theme.highlightButtonColor = UIColor(rgb: 0xAC39FF)
         themes[Theme.PrivateMode] = theme
 
         theme = Theme()
         theme.borderColor = TextFieldBorderColor
         theme.activeBorderColor = TextFieldActiveBorderColor
+        theme.highlightButtonColor = UIColor(rgb: 0x00A2FE)
         theme.tintColor = ProgressTintColor
         theme.textColor = UIColor.black
         theme.buttonTintColor = UIColor.darkGray
@@ -182,23 +184,18 @@ class URLBarView: UIView {
         return button
     }()
 
-    var shareButton: UIButton = UIButton()
-
-    var menuButton: UIButton = UIButton()
-
-    var bookmarkButton: UIButton = UIButton()
-
-    var forwardButton: UIButton = UIButton()
+    var shareButton: UIButton = ToolbarButton()
+    var menuButton: UIButton = ToolbarButton()
+    var bookmarkButton: UIButton = ToolbarButton()
+    var forwardButton: UIButton = ToolbarButton()
+    var stopReloadButton: UIButton = ToolbarButton()
+    var homePageButton: UIButton = ToolbarButton()
 
     var backButton: UIButton = {
-        let backButton = UIButton()
+        let backButton = ToolbarButton()
         backButton.accessibilityIdentifier = "URLBarView.backButton"
         return backButton
     }()
-
-    var stopReloadButton: UIButton = UIButton()
-
-    var homePageButton: UIButton = UIButton()
 
     lazy var actionButtons: [UIButton] = [self.shareButton, self.menuButton, self.forwardButton, self.backButton, self.stopReloadButton, self.homePageButton]
 
@@ -584,10 +581,8 @@ extension URLBarView: TabToolbarProtocol {
         helper?.updateReloadStatus(isLoading)
         if isLoading {
             stopReloadButton.setImage(helper?.ImageStop, for: .normal)
-            stopReloadButton.setImage(helper?.ImageStopPressed, for: .highlighted)
         } else {
             stopReloadButton.setImage(helper?.ImageReload, for: .normal)
-            stopReloadButton.setImage(helper?.ImageReloadPressed, for: .highlighted)
         }
     }
 
@@ -696,6 +691,13 @@ extension URLBarView {
         }
     }
 
+    dynamic var actionButtonSelectedTintColor: UIColor? {
+        get { return helper?.selectedButtonTintColor }
+        set {
+            guard let value = newValue else { return }
+            helper?.selectedButtonTintColor = value
+        }
+    }
 }
 
 extension URLBarView: Themeable {
@@ -715,7 +717,7 @@ extension URLBarView: Themeable {
         progressBarTint = theme.tintColor
         cancelTextColor = theme.textColor
         actionButtonTintColor = theme.buttonTintColor
-
+        actionButtonSelectedTintColor = theme.highlightButtonColor
         tabsButton.applyTheme(themeName)
     }
 }
